@@ -1,16 +1,35 @@
-# myapp
+# Task Notes Manager
 
-A new Flutter project.
+A Flutter application for managing tasks and notes, built for the BSE 3106 Flutter Assignment.
 
-## Getting Started
+## Student Information
 
-This project is a starting point for a Flutter application.
+- **Name:** [**MPANGA MARVIN JOSEPH**]
+- **Student Number:** [**2300724167**]
 
-A few resources to get you started if this is your first Flutter project:
+## Project Description
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+This app allows users to create, view, update, and delete tasks. Each task has a title, description, and priority level. The app features local data storage using an `sqflite` database, ensuring that all tasks are saved on the device.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The user interface includes a dynamic theme that can be switched between light and dark modes. The user's theme preference is saved locally using `shared_preferences` and is automatically applied when the app restarts.
+
+The visual design is modern and clean, inspired by a "whiteboard" aesthetic, with an emphasis on good typography, clear layout, and intuitive user interaction.
+
+## How to Run the Project
+
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/mavn-bussiness/flutter-task-notes-app.git
+    ```
+2.  **Navigate to the project directory:**
+    ```bash
+    cd task_notes_manager
+    ```
+3.  **Get the dependencies:**
+    ```bash
+    flutter pub get
+    ```
+4.  **Run the app:**
+    ```bash
+    flutter run
+    ```
