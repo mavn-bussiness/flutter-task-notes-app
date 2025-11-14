@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/home_screen.dart';
@@ -23,23 +24,62 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           title: 'Task Notes Manager',
           debugShowCheckedModeBanner: false,
-          theme: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-            appBarTheme: const AppBarTheme(
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
-            ),
-          ),
-          darkTheme: ThemeData.dark().copyWith(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: Colors.blue,
-              brightness: Brightness.dark,
-            ),
-          ),
-          themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          theme: _buildTheme(Brightness.light),
+          darkTheme: _buildTheme(Brightness.dark),
+          themeMode: themeProvider.isDarkMode
+              ? ThemeMode.dark
+              : ThemeMode.light,
           home: const HomeScreen(),
         );
       },
+    );
+  }
+
+  ThemeData _buildTheme(Brightness brightness) {
+    final baseTheme = brightness == Brightness.light
+        ? ThemeData.light(useMaterial3: true)
+        : ThemeData.dark(useMaterial3: true);
+
+    const seedColor = Colors.deepPurple;
+
+    return baseTheme.copyWith(
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: seedColor,
+        brightness: brightness,
+      ),
+      scaffoldBackgroundColor: brightness == Brightness.light
+          ? const Color(0xFFF7F7F8)
+          : Colors.black,
+      textTheme: GoogleFonts.latoTextTheme(baseTheme.textTheme),
+      appBarTheme: baseTheme.appBarTheme.copyWith(
+        backgroundColor: brightness == Brightness.light
+            ? Colors.white
+            : Colors.grey[900],
+        foregroundColor: brightness == Brightness.light
+            ? Colors.black
+            : Colors.white,
+        elevation: 0,
+        titleTextStyle: GoogleFonts.oswald(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.white,
+          backgroundColor: seedColor,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          textStyle: GoogleFonts.roboto(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+      cardTheme: baseTheme.cardTheme.copyWith(
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
     );
   }
 }

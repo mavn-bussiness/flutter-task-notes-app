@@ -49,13 +49,13 @@ class _HomeScreenState extends State<HomeScreen> {
   Color _getPriorityColor(String priority) {
     switch (priority.toLowerCase()) {
       case 'high':
-        return Colors.red;
+        return Colors.red.shade300;
       case 'medium':
-        return Colors.orange;
+        return Colors.orange.shade300;
       case 'low':
-        return Colors.green;
+        return Colors.green.shade300;
       default:
-        return Colors.grey;
+        return Colors.grey.shade400;
     }
   }
 
@@ -66,123 +66,21 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Tasks & Notes'),
-        elevation: 2,
-      ),
-      body: Column(
-        children: [
-          // Theme Switch
-          SwitchListTile(
-            title: const Text('Dark Mode'),
-            subtitle: const Text('Toggle app theme'),
-            value: themeProvider.isDarkMode,
-            onChanged: (value) {
-              themeProvider.toggleTheme();
-            },
-            secondary: Icon(
-              themeProvider.isDarkMode 
-                ? Icons.dark_mode 
-                : Icons.light_mode,
+        actions: [
+          IconButton(
+            icon: Icon(
+              themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode,
             ),
-          ),
-          const Divider(),
-          
-          // Welcome Message
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'My Tasks & Notes',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          
-          // Task List
-          Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _tasks.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.task_alt, size: 64, 
-                              color: Colors.grey[400]),
-                            const SizedBox(height: 16),
-                            Text(
-                              'No tasks yet!',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Tap + to add your first task',
-                              style: TextStyle(color: Colors.grey[500]),
-                            ),
-                          ],
-                        ),
-                      )
-                    : ListView.builder(
-                        padding: const EdgeInsets.all(8),
-                        itemCount: _tasks.length,
-                        itemBuilder: (context, index) {
-                          final task = _tasks[index];
-                          return Card(
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 8, 
-                              vertical: 4,
-                            ),
-                            child: ListTile(
-                              leading: Checkbox(
-                                value: task.isCompleted,
-                                onChanged: (value) => _toggleTaskCompletion(task),
-                              ),
-                              title: Text(
-                                task.title,
-                                style: TextStyle(
-                                  decoration: task.isCompleted
-                                      ? TextDecoration.lineThrough
-                                      : null,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(height: 4),
-                                  Text(task.description),
-                                  const SizedBox(height: 4),
-                                  Chip(
-                                    label: Text(
-                                      task.priority,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    backgroundColor: _getPriorityColor(
-                                      task.priority,
-                                    ),
-                                    padding: EdgeInsets.zero,
-                                    materialTapTargetSize: 
-                                      MaterialTapTargetSize.shrinkWrap,
-                                  ),
-                                ],
-                              ),
-                              trailing: IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.red),
-                                onPressed: () => _deleteTask(task.id),
-                              ),
-                              isThreeLine: true,
-                            ),
-                          );
-                        },
-                      ),
+            onPressed: () => themeProvider.toggleTheme(),
+            tooltip: 'Toggle Theme',
           ),
         ],
       ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _tasks.isEmpty
+              ? _buildEmptyState()
+              : _buildTaskList(),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await Navigator.push(
@@ -193,6 +91,87 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         child: const Icon(Icons.add),
       ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.task_alt, size: 80, color: Colors.grey[300]),
+          const SizedBox(height: 24),
+          Text(
+            'No tasks yet!',
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[600],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Tap the + button to add your first task.',
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: Colors.grey[500],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTaskList() {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: _tasks.length,
+      itemBuilder: (context, index) {
+        final task = _tasks[index];
+        return Card(
+          margin: const EdgeInsets.only(bottom: 16),
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            leading: Checkbox(
+              value: task.isCompleted,
+              onChanged: (value) => _toggleTaskCompletion(task),
+              activeColor: Theme.of(context).colorScheme.primary,
+            ),
+            title: Text(
+              task.title,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                decoration: task.isCompleted ? TextDecoration.lineThrough : null,
+                decorationColor: Colors.grey,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 4),
+                Text(
+                  task.description,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 8),
+                Chip(
+                  label: Text(
+                    task.priority,
+                    style: const TextStyle(color: Colors.white, fontSize: 12),
+                  ),
+                  backgroundColor: _getPriorityColor(task.priority),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+              ],
+            ),
+            trailing: IconButton(
+              icon: Icon(Icons.delete, color: Colors.red.shade300),
+              onPressed: () => _deleteTask(task.id),
+              tooltip: 'Delete Task',
+            ),
+            isThreeLine: true,
+          ),
+        );
+      },
     );
   }
 }
